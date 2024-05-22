@@ -110,8 +110,31 @@ test("Reusing the locators", async ({ page }) => {
   await emailField.fill("test@test.com");
 
   await basicForm.getByRole("textbox", { name: "Password" }).fill("Welcome123");
-  await basicForm.locator('nb-checkbox').click()
+  await basicForm.locator("nb-checkbox").click();
   await basicForm.getByRole("button").click();
 
-  await expect(emailField).toHaveValue('test@test.com')
+  await expect(emailField).toHaveValue("test@test.com");
+});
+
+test("getting text from web elements", async ({ page }) => {
+  //single test value
+  const basicForm = page.locator("nb-card").filter({ hasText: "Basic form" });
+  const buttonText = await basicForm.locator("button").textContent();
+  expect(buttonText).toEqual("Submit");
+
+  //all test values
+  const allRadioButtonsLabels = await page
+    .locator("nb-radio")
+    .allTextContents();
+  // console.log(allRadioButtonsLabels)
+  expect(allRadioButtonsLabels).toContain("Option 1");
+
+  //input values
+  const emailField = basicForm.getByRole("textbox", { name: "Email" });
+  await emailField.fill("test@test.com");
+  const emailValue = await emailField.inputValue();
+  expect(emailValue).toEqual("test@test.com");
+
+  const placeholderValue = await emailField.getAttribute("placeholder");
+  expect(placeholderValue).toEqual("Email");
 });
