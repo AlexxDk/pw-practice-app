@@ -68,3 +68,54 @@ test.describe("Form Layouts page", () => {
     ).toBeTruthy();
   });
 });
+
+test("checkboxes", async ({ page }) => {
+  await page.getByText("Modal & Overlays").click();
+  await page.getByText("Toastr").click();
+
+  await page
+    .getByRole("checkbox", { name: "Hide on click" })
+    .uncheck({ force: true });
+  await page
+    .getByRole("checkbox", { name: "Prevent arising of duplicate toast" })
+    .check({ force: true });
+
+  const allBoxes = page.getByRole("checkbox");
+  for (const box of await allBoxes.all()) {
+    await box.uncheck({ force: true });
+    expect(await box.isChecked()).toBeFalsy();
+  }
+});
+
+
+test('lists and dropdowns', async ({ page }) => {
+  const dropdownMenu = page.locator('ngx-header nb-select')
+  await dropdownMenu.click()
+
+  page.getByRole('list') // when the list has a UL tag
+  page.getByRole('listitem') // // when the list has a LI tag (array)
+
+  // const optionList = page.getByRole('list').locator('nb-option')
+  const optionList = page.locator('nb-option-list nb-option')
+  await expect(optionList).toHaveText(['Light', 'Dark', 'Cosmic', 'Corporate'])
+  await optionList.filter({ hasText: "Cosmic" }).click()
+  const header = page.locator('nb-layout-header')
+  await expect(header).toHaveCSS('background-color', 'rgb(50, 50, 89)')
+
+  const colors = {
+    'Light': 'rgb(255, 255, 255)',
+    'Dark': 'rgb(34, 43, 69)',
+    'Cosmic': 'rgb(50, 50, 89)',
+    'Corporate': 'rgb(255, 255, 255)'
+  }
+
+  await dropdownMenu.click()
+  for (const color in colors) {
+    await optionList.filter({ hasText: color }).click()
+    await expect(header).toHaveCSS('background-color', colors[color])
+
+    if (color != "Corporate")
+      await dropdownMenu.click()
+  }
+
+})
