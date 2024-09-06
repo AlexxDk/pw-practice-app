@@ -9,7 +9,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "mobile-project": "npx playwright test testMobile.spec.ts --project=mobile"
+    "mobile-project": "npx playwright test testMobile.spec.ts --project=mobile",
+    "usePageObjects-chrome": "npx playwright test usePageObject.spec.ts --project=chromium"
   },
   "dependencies": {
     "@angular/animations": "^14.2.12",
